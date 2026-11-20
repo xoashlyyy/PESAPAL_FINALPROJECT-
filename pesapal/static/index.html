@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PesaPal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --pink:#e11d74;--deep:#b0125a;--light:#f7b8d0;--blush:#fdeef4;--card:#ffffff;
+  --ink:#3b2a33;--grey:#8a7a82;--track:#eee6ea;--err:#c62828;--bg:#f9dbe7;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--card:#2b1d25;--ink:#fbeaf1;--grey:#c3a9b6;--blush:#1f141a;--track:#3d2b35;--bg:#140d11}
+}
+:root[data-theme="dark"]{--card:#2b1d25;--ink:#fbeaf1;--grey:#c3a9b6;--blush:#1f141a;--track:#3d2b35;--bg:#140d11}
+*{box-sizing:border-box;margin:0;font-family:'Inter','system-ui',Roboto,Arial,sans-serif}
+html,body{height:100%}
+body{background:radial-gradient(circle at 20% 10%,var(--light),transparent 55%),var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center}
+.phone{position:relative;width:100%;max-width:410px;height:min(840px,100%);background:var(--blush);display:flex;flex-direction:column;overflow:hidden;border-radius:28px;box-shadow:0 24px 60px rgba(194,51,107,.28)}
+@media (max-width:440px){.phone{border-radius:0;max-width:none}}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 8px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;color:var(--deep)}
+main{flex:1;overflow-y:auto;padding:8px 18px 20px;scroll-behavior:smooth}
+.view{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+nav{display:flex;background:var(--card);padding:8px 6px 10px;border-radius:22px 22px 0 0;box-shadow:0 -6px 20px rgba(194,51,107,.1)}
+nav button{flex:1;border:0;background:none;color:var(--grey);font-size:11px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;cursor:pointer;border-radius:14px}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--pink)}
+nav button.on svg{stroke:var(--pink)}
+nav button.fab{color:#fff}
+nav button.fab span{display:grid;place-items:center;width:46px;height:46px;margin-top:-22px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--deep));box-shadow:0 8px 18px rgba(194,51,107,.4)}
+nav button.fab svg{stroke:#fff}
+nav button.fab b{color:var(--grey);font-weight:500}
+.card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:0 4px 16px rgba(194,51,107,.07)}
+.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,#f0508f,var(--deep));border-radius:24px;padding:20px;margin-bottom:16px;box-shadow:0 14px 30px rgba(194,51,107,.35)}
+.hero svg.art{position:absolute;right:-20px;top:-20px;width:190px;opacity:.35}
+.hero small{opacity:.85;font-size:12px}
+.hero h2{font-size:17px;font-weight:600;margin-bottom:14px;position:relative}
+.figs{display:flex;gap:10px;position:relative}
+.figs div{flex:1;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);border-radius:14px;padding:10px 12px}
+.figs b{display:block;font-size:17px;margin-top:2px}
+.bar{display:flex;height:12px;border-radius:7px;overflow:hidden;background:var(--track);margin-top:14px}
+.bar i{display:block;height:100%;transition:flex .4s ease}
+h3{font-size:16px;font-weight:600;margin:6px 2px 10px}
+.row{display:flex;align-items:center;gap:12px}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;flex:none}
+.grow{flex:1;min-width:0}
+.grow b{display:block;font-size:15px;font-weight:600}
+.grow span{font-size:13px}
+.owe{color:var(--deep)}.get{color:var(--pink)}.mute{color:var(--grey)}
+.btn{border:0;cursor:pointer;font-weight:600;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--pink),var(--deep));border-radius:14px;padding:14px 18px;width:100%;box-shadow:0 8px 18px rgba(194,51,107,.28);transition:transform .15s}
+.btn:active{transform:scale(.98)}
+.btn.sm{width:auto;padding:9px 16px;font-size:13px;border-radius:12px}
+.btn.line{background:none;color:var(--pink);border:1.5px solid var(--pink);box-shadow:none}
+label{display:block;font-size:13px;color:var(--grey);margin:12px 0 6px}
+input,select{width:100%;border:1.5px solid transparent;background:var(--blush);color:var(--ink);border-radius:12px;padding:13px;font-size:15px;outline:none}
+input:focus,select:focus{border-color:var(--pink)}
+.amt{font-size:28px;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:0;background:var(--blush);color:var(--pink);font-weight:600;font-size:13px;padding:9px 14px;border-radius:20px;cursor:pointer}
+.chip.on{background:var(--pink);color:#fff}
+.mem{display:flex;align-items:center;gap:10px;padding:7px 0}
+.mem input[type=checkbox]{width:20px;height:20px;accent-color:var(--pink)}
+.mem input.v{width:78px;padding:9px}
+.mem .sh{width:100px;text-align:right;color:var(--pink);font-weight:600;font-size:14px}
+.err{color:var(--err);font-size:13px;margin-top:8px}
+.ok{font-weight:600;font-size:13px;margin-top:8px}
+.tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:var(--blush)}
+.tag.Completed{color:var(--pink)}.tag.Failed{color:var(--err)}
+.hash{font-size:11px;color:var(--grey);margin-top:6px;word-break:break-all}
+.layer{position:absolute;inset:0;background:rgba(59,42,51,.55);display:none;align-items:flex-end;z-index:5}
+.layer.full{background:var(--blush);align-items:stretch}
+.layer.open{display:flex}
+.sheet{width:100%;background:var(--card);border-radius:26px 26px 0 0;padding:22px 20px 26px;animation:rise .3s ease both;max-height:92%;overflow:auto}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;gap:12px}
+.pulse{position:relative;width:120px;height:120px;display:grid;place-items:center}
+.pulse i{position:absolute;inset:0;border-radius:50%;border:3px solid var(--pink);animation:ring 2s infinite ease-out;opacity:0}
+.pulse i:nth-child(2){animation-delay:.7s}
+@keyframes ring{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.5);opacity:0}}
+.count{font-size:46px;font-weight:700;color:var(--pink)}
+.check path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .6s .2s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.toast{position:absolute;left:18px;right:18px;bottom:84px;background:var(--deep);color:#fff;padding:13px 16px;border-radius:14px;font-size:14px;opacity:0;transform:translateY(12px);transition:.3s;pointer-events:none;z-index:9}
+.toast.show{opacity:1;transform:none}
+.donut{display:flex;align-items:center;gap:16px}
+.legend{font-size:12px;flex:1}
+.legend div{display:flex;align-items:center;gap:8px;margin:4px 0}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.hint{font-size:12px;color:var(--grey);margin:10px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.corner{position:absolute;left:8px;bottom:80px;width:50px;height:96px;pointer-events:none;z-index:3;overflow:hidden}
+.corner i{position:absolute;left:2px;bottom:-16px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b0,#f6b93b);border:2px solid #e59f1c;animation:floatup 4s infinite ease-in}
+.corner i:nth-child(2){left:18px;animation-delay:1.3s}.corner i:nth-child(3){left:32px;animation-delay:2.6s}
+@keyframes floatup{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translateY(-90px) scale(1) rotate(360deg);opacity:0}}
+.coinfall{position:absolute;top:-24px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b0,#f6b93b);border:2px solid #e59f1c;animation:fall 2.4s linear forwards;z-index:8;pointer-events:none}
+@keyframes fall{to{transform:translateY(900px) rotate(720deg)}}
+.heroimg{position:absolute;right:12px;top:12px;display:flex;align-items:flex-end;gap:2px;transform:rotate(-6deg)}
+.fly{animation:bob 2.4s ease-in-out infinite}
+.obj{background:var(--blush);border-radius:16px;padding:14px;margin-bottom:12px}
+.obj small{color:var(--pink);font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+.obj p{font-size:13px;margin:6px 0}
+.obj .ev{display:inline-block;background:var(--card);color:var(--deep);font-size:12px;font-weight:600;padding:4px 10px;border-radius:12px;margin:2px 0 8px}
+.scale{display:flex;gap:6px;margin:6px 0 10px}
+
+/* ---- v2 look: black and white with pink accents, neutral type, moving background ---- */
+:root{--pink:#e11d74;--deep:#b0125a;--light:#fbcfe1;--blush:#f5f5f6;--card:#fff;--ink:#0b0b0c;--grey:#6e6e76;--track:#e9e9ec;--bg:#e4e4e8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#17171a;--ink:#f5f5f6;--grey:#a0a0a8;--blush:#0e0e10;--track:#2a2a2f;--bg:#050506}}
+*{letter-spacing:-.005em}
+body{background:var(--bg)}
+@media (min-width:441px){.phone{border:9px solid #0b0b0c;border-radius:46px;box-shadow:0 30px 70px rgba(0,0,0,.35)}}
+.phone>*{position:relative;z-index:1}.phone>.layer,.phone>.toast{position:absolute}
+.orb{position:absolute!important;z-index:0!important;border-radius:50%;filter:blur(38px);pointer-events:none;opacity:.55;animation:drift 14s ease-in-out infinite alternate}
+.o1{width:220px;height:220px;background:#f9b4d1;top:-60px;right:-70px}
+.o2{width:200px;height:200px;background:#c9c9d1;top:42%;left:-90px;animation-duration:18s}
+.o3{width:180px;height:180px;background:#fbd0e2;bottom:60px;right:-60px;animation-duration:16s;animation-delay:-5s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-26px,34px) scale(1.15)}100%{transform:translate(18px,-22px) scale(.95)}}
+.brand{color:var(--ink);font-weight:800;letter-spacing:-.03em}
+nav{box-shadow:0 -6px 24px rgba(0,0,0,.07)}
+nav button.on{color:var(--ink)}nav button.on svg{stroke:var(--pink);animation:pop .35s ease}
+nav button.fab span{background:var(--pink);box-shadow:0 10px 22px rgba(225,29,116,.4);animation:glow 2.8s ease-in-out infinite}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes glow{0%,100%{box-shadow:0 10px 22px rgba(225,29,116,.35)}50%{box-shadow:0 10px 34px rgba(225,29,116,.6)}}
+.card{box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.09)}
+.hero{background:#0b0b0c;box-shadow:0 18px 36px rgba(0,0,0,.3)}
+.hero::after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(225,29,116,.75),transparent 70%);right:-50px;bottom:-70px;animation:drift 9s ease-in-out infinite alternate}
+.figs div{background:rgba(255,255,255,.09)}
+.btn{background:var(--pink);box-shadow:0 8px 18px rgba(225,29,116,.25)}
+.btn.line{background:none;color:var(--ink);border:1.5px solid var(--ink);box-shadow:none}
+.chip{background:var(--blush);color:var(--ink)}.chip.on{background:var(--ink);color:var(--card)}
+.owe{color:var(--ink)}.get{color:var(--pink)}
+.toast{background:#0b0b0c}.count,.center h2{color:var(--ink)}
+.float{display:inline-block;animation:bob 3s ease-in-out infinite}.float.b{animation-duration:3.7s;animation-delay:-1.2s}
+.heroimg{animation:bob 3.4s ease-in-out infinite}
+.view>*{animation:rise .5s both}
+.ico{all:unset;position:relative;cursor:pointer;width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:var(--card)}
+.ico svg{width:19px;height:19px;stroke:var(--ink);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ico b{position:absolute;top:-2px;right:-2px;min-width:17px;height:17px;border-radius:9px;background:var(--pink);color:#fff;font-size:10px;display:none;place-items:center;padding:0 4px;animation:glow 2s infinite}
+.ico b.on{display:grid}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.tile{background:var(--card);border-radius:18px;padding:12px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.tile small{color:var(--grey);font-size:11px;display:block}.tile b{display:block;font-size:20px;font-weight:800;margin:4px 0 2px}.tile span{font-size:11px;color:var(--grey)}
+.tip{background:var(--ink);color:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.45}
+.tip b{display:block;font-size:13px;color:#fff}.tip span{opacity:.75}.tip:nth-child(odd){background:var(--card);color:var(--ink);box-shadow:0 2px 12px rgba(0,0,0,.05)}.tip:nth-child(odd) b{color:var(--pink)}
+.prog{height:9px;border-radius:5px;background:var(--track);overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;border-radius:5px;background:var(--ink);position:relative;overflow:hidden;transition:width 1s ease}
+.prog i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:sheen 2.4s infinite}
+@keyframes sheen{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.ringbox{position:relative;width:190px;margin:4px auto 10px}.ringbox svg{display:block;width:100%}
+.ringbox .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ringbox small{font-size:10px;letter-spacing:.12em;color:var(--grey);font-weight:600}.ringbox b{font-size:22px;font-weight:800}
+.rfg{transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
+.sw{all:unset;cursor:pointer;width:46px;height:27px;border-radius:14px;background:var(--track);position:relative;transition:.25s;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:.25s}
+.sw.on{background:var(--pink)}.sw.on::after{left:22px}
+.av.sq{border-radius:14px;background:var(--ink)!important}
+.sec{display:flex;align-items:center;justify-content:space-between}.sec h3{margin:6px 2px 10px}
+
+/* login and white shades */
+.lnk{color:var(--pink);font-weight:600;cursor:pointer}
+.devnote{background:var(--ink);color:var(--card);font-size:12px;border-radius:12px;padding:10px 12px;margin:10px 0 0;line-height:1.45}
+.pinbox{letter-spacing:.35em;font-weight:700;font-size:18px}
+.shade{display:flex;align-items:center;gap:14px;padding:12px;border-radius:16px;border:1.5px solid var(--track);margin-bottom:10px;cursor:pointer;background:var(--card)}
+.shade.on{border-color:var(--pink)}.shade i{width:44px;height:44px;border-radius:12px;border:1px solid #d9d9de;flex:none;position:relative}
+.shade i::after{content:"";position:absolute;left:8px;right:8px;bottom:8px;height:14px;border-radius:5px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.shade b{display:block;font-size:14px}.shade span{font-size:12px;color:var(--grey)}
+:root[data-white=pure]{--blush:#fff;--card:#fff;--bg:#f1f1f3}
+:root[data-white=pure] .card,:root[data-white=pure] .tile{box-shadow:none;border:1px solid #ececef}
+:root[data-white=pure] input,:root[data-white=pure] select{background:#f4f4f5}
+:root[data-white=pearl]{--blush:#f5f5f6;--card:#fff;--bg:#e4e4e8}
+:root[data-white=ivory]{--blush:#faf6ef;--card:#fffdf9;--bg:#ece6dc;--track:#eee8dd}
+:root[data-white=mist]{--blush:#f0f4f9;--card:#fff;--bg:#dde3ec;--track:#e3e9f1}
+</style>
+</head>
+<body>
+<div class="phone">
+  <header>
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 40 40"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0508f"/><stop offset="1" stop-color="#b0125a"/></linearGradient></defs><rect width="40" height="40" rx="12" fill="url(#lg)"/><path d="M13 29V11h8a6 6 0 010 12h-8" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="title">PesaPal</span>
+    </div>
+    <div class="row" style="gap:8px">
+      <button class="ico" onclick="go('alerts')" aria-label="Alerts"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21h4"/></svg><b id="badge"></b></button>
+      <button class="ico" onclick="go('history')" aria-label="History"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+      <div class="av" id="me" onclick="openMenu()" title="Menu" style="background:var(--ink);width:36px;height:36px;font-size:14px;cursor:pointer"></div></div>
+  </header>
+  <main id="view"></main>
+  <nav id="nav"></nav>
+  <div class="layer" id="layer"></div>
+  <div class="toast" id="toast"></div>
+  <div class="corner"><i></i><i></i><i></i></div>
+  <i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i>
+</div>
+
+<script>
+const COLORS = ['#0b0b0c', '#e11d74', '#8b8b93', '#f58fba', '#3a3a40', '#d4d4d8'];
+const AVC = ['#0b0b0c', '#2a2a2e', '#e11d74', '#4b4b52'];
+const CATS = ['Rent', 'Food', 'Groceries', 'Transport', 'Data & Airtime', 'Utilities', 'Fun', 'Other'];
+const ICON = {
+  home: '<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',
+  list: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  wallet: '<path d="M3 7h16a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M3 7l12-3v3M16 14h2"/>',
+  house: '<path d="M3 10l9-6 9 6"/><path d="M5 9v11h14V9M10 20v-6h4v6"/>',
+  bell: '<path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21h4"/>'
+};
+const TABS = [['home', 'Home', 'home'], ['expenses', 'Split', 'list'], ['add', 'Add', 'plus'], ['money', 'Money', 'wallet'], ['house', 'House', 'house']];
+
+const $ = s => document.querySelector(s);
+const money = v => 'KES ' + Number(v).toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Everything the screens show is kept here, and comes from the server.
+let S = { me: null, members: [], bal: { owe: 0, owed: 0, people: [] }, hist: [], notes: [] };
+
+async function api(path, method = 'GET', body) {
+  let res;
+  try {
+    res = await fetch(path, {
+      method,
+      headers: { 'Content-Type': 'application/json', ...(S.me ? { 'Authorization': 'Bearer ' + S.me.token } : {}) },
+      body: body ? JSON.stringify(body) : undefined
+    });
+  } catch (e) {
+    throw new Error('Could not reach the server. Is the backend running?');
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Please check the details you entered.');
+  return data;
+}
+
+async function refresh() {
+  const [members, bal, hist, notes, fund, budget, bills, kitties, tips] = await Promise.all([
+    api('/members'), api('/balances'), api('/history'), api('/notifications'),
+    api('/fund'), api('/budget'), api('/bills'), api('/kitties'), api('/insights')
+  ]);
+  S = { ...S, members, bal, hist, notes, fund, budget, bills, kitties, tips };
+}
+
+const avatar = (name, size = 42) =>
+  `<div class="av" style="width:${size}px;height:${size}px;background:linear-gradient(135deg,${AVC[name.charCodeAt(0) % 4]},#b0125a)">${esc(name[0])}</div>`;
+
+function toast(text) {
+  const t = $('#toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function openLayer(html, full) {
+  const l = $('#layer');
+  l.className = 'layer open' + (full ? ' full' : '');
+  l.innerHTML = html;
+}
+function closeLayer() { $('#layer').className = 'layer'; $('#layer').innerHTML = ''; }
+
+// Sign in, the buddy changes with the person's gender
+
+
+
+
+
+// Navigation
+let tab = 'home';
+function drawNav() {
+  $('#nav').innerHTML = TABS.map(([key, label, icon]) => {
+    const svg = `<svg viewBox="0 0 24 24">${ICON[icon]}</svg>`;
+    if (key === 'add') return `<button class="fab" onclick="go('add')"><span>${svg}</span><b>${label}</b></button>`;
+    return `<button class="${tab === key ? 'on' : ''}" onclick="go('${key}')">${svg}${label}</button>`;
+  }).join('');
+}
+
+const VIEWS = () => ({ home: viewHome, expenses: viewExpenses, add: viewAdd, history: viewHistory, alerts: viewAlerts, money: viewMoney, house: viewHouse });
+const TITLES = { home: 'PesaPal', expenses: 'Split expenses', add: 'Add expense', history: 'Transaction history', alerts: 'Alerts', money: 'Money', house: 'House' };
+
+function render() {
+  $('#view').innerHTML = '<div class="view">' + VIEWS()[tab]() + '</div>';
+  if (tab === 'add') upd();
+  [...$('#view .view').children].forEach((c, i) => c.style.animationDelay = i * 60 + 'ms');
+  requestAnimationFrame(() => document.querySelectorAll('.rfg').forEach(c => c.style.strokeDashoffset = c.dataset.off));
+  document.querySelectorAll('[data-n]').forEach(el => {
+    const to = +el.dataset.n, t0 = performance.now();
+    (function step(t) { const p = Math.min((t - t0) / 900, 1); el.textContent = money(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); })(t0);
+  });
+  const badge = $('#badge'); badge.textContent = S.notes.length; badge.classList.toggle('on', S.notes.length > 0);
+}
+
+async function go(name) {
+  tab = name;
+  $('#title').textContent = TITLES[name];
+  drawNav();
+  $('#view').scrollTop = 0;
+  try {
+    if (name !== 'add' || !S.members.length) await refresh();
+    render();
+  } catch (e) {
+    $('#view').innerHTML = `<div class="card"><p>${esc(e.message)}</p><div style="margin-top:12px"><button class="btn" onclick="go('${name}')">Try again</button></div></div>`;
+  }
+}
+
+// Home
+function donut() {
+  const sums = {};
+  S.hist.filter(e => e.kind === 'expense').forEach(e => sums[e.category] = (sums[e.category] || 0) + e.amount);
+  const keys = Object.keys(sums);
+  const total = keys.reduce((a, k) => a + sums[k], 0);
+  if (!total) return '';
+  const C = 2 * Math.PI * 40;
+  let offset = 0;
+  const rings = keys.map((k, i) => {
+    const len = sums[k] / total * C;
+    const el = `<circle r="40" cx="50" cy="50" fill="none" stroke="${COLORS[i % 6]}" stroke-width="16" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-offset}" transform="rotate(-90 50 50)"/>`;
+    offset += len;
+    return el;
+  }).join('');
+  const legend = keys.map((k, i) => `<div><i style="background:${COLORS[i % 6]}"></i>${esc(k)}<span class="mute" style="margin-left:auto">${Math.round(sums[k] / total * 100)}%</span></div>`).join('');
+  return `<div class="card"><h3 style="margin-top:0">Spending by category</h3><div class="donut"><svg width="110" height="110" viewBox="0 0 100 100">${rings}<text x="50" y="47" text-anchor="middle" font-size="8" fill="#8a7a82">Total</text><text x="50" y="59" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor">${Math.round(total).toLocaleString('en-KE')}</text></svg><div class="legend">${legend}</div></div></div>`;
+}
+
+function viewHome() {
+  const { owe, owed, people } = S.bal, f = S.fund, b = S.budget;
+  const next = S.bills.filter(x => x.status !== 'paid')[0];
+  const rows = people.map(p => {
+    let status = '<span class="mute">All settled</span>', action = '';
+    if (p.net < 0) { status = `<span class="owe">You owe ${money(-p.net)}</span>`; action = `<button class="btn sm" onclick="openSettle('${p.id}','${esc(p.name)}',${-p.net})">Pay</button>`; }
+    if (p.net > 0) { status = `<span class="get">Owes you ${money(p.net)}</span>`; action = `<button class="btn sm line" onclick="remind('${p.id}')">Remind</button>`; }
+    return `<div class="card"><div class="row">${avatar(p.name)}<div class="grow"><b>${esc(p.name)}</b>${status}</div>${action}</div></div>`;
+  }).join('');
+  return `<div class="hero"><div class="heroimg"><span class="float">${banknote(80)}</span><span class="float b">${coins(40)}</span></div><small>Welcome back</small><h2>Hello, ${esc(S.me.name)}</h2>
+    <div class="figs"><div><small>You owe</small><b data-n="${owe}">${money(0)}</b></div><div><small>You are owed</small><b data-n="${owed}">${money(0)}</b></div></div>
+    <div class="bar" style="background:rgba(255,255,255,.2)"><i style="flex:${owed || 0};background:#fff"></i><i style="flex:${owe || 0};background:var(--pink)"></i></div></div>
+    <div class="tiles">
+      <div class="tile" onclick="go('money')"><small>Dharura fund</small><b>${Math.round(Math.min(f.saved / f.goal, 1) * 100)}%</b><span>${f.runway_months} months saved</span></div>
+      <div class="tile" onclick="go('money')"><small>${esc(b.income_label)}</small><b>${b.days_to_payday}</b><span>days to payday</span></div>
+      <div class="tile" onclick="go('house')"><small>Next bill</small><b style="font-size:15px;margin-top:9px">${next ? esc(next.title) : 'All paid'}</b><span>${next ? (next.status === 'overdue' ? 'overdue' : 'in ' + next.days_left + ' days') : 'this month'}</span></div></div>
+    <h3>Smart tips</h3>${S.tips.map(t => `<div class="tip"><b>${esc(t.title)}</b><span>${esc(t.body)}</span></div>`).join('')}
+    ${donut()}<h3>Who owes whom</h3>${rows}`;
+}
+
+async function remind(id) {
+  try { toast((await api('/reminders', 'POST', { user_id: id })).message); } catch (e) { toast(e.message); }
+}
+
+// Expenses
+function viewExpenses() {
+  const list = S.hist.filter(e => e.kind === 'expense').map(e => `<div class="card"><div class="row"><div class="av" style="background:var(--blush);color:var(--pink);border-radius:14px">${esc(e.category[0])}</div>
+    <div class="grow"><b>${esc(e.title)}</b><span class="mute">${esc(e.category)}, paid by ${esc(e.payer_name)}</span></div><b>${money(e.amount)}</b></div>
+    <p style="margin:12px 0" class="${e.my_share == null ? 'mute' : 'get'}"><b>${e.my_share == null ? 'You are not part of this split' : 'Your share is ' + money(e.my_share)}</b></p>
+    <button class="btn line" onclick="breakdown(${e.id})">See how this was calculated</button></div>`).join('');
+  return list || '<p class="mute">No expenses yet. Tap Add to start.</p>';
+}
+
+function breakdown(id) {
+  const e = S.hist.find(x => x.id === id);
+  const total = e.shares.reduce((a, s) => a + s.amount, 0);
+  const bar = e.shares.map((s, i) => `<i style="flex:${s.amount / e.amount};background:${COLORS[i % 6]}"></i>`).join('');
+  const rows = e.shares.map((s, i) => `<div class="row" style="justify-content:space-between;margin:8px 0"><span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${COLORS[i % 6]};margin-right:8px"></i>${esc(s.name)}${s.name === e.payer_name ? ', the payer' : ''}</span><b class="get">${money(s.amount)}</b></div>`).join('');
+  openLayer(`<div class="sheet"><h3 style="margin:0 0 4px">How this was calculated</h3><p class="mute" style="font-size:13px">${esc(e.title)}, ${money(e.amount)}, paid by ${esc(e.payer_name)}, ${e.mode} split</p>
+    <div class="bar">${bar}</div><div style="margin-top:12px">${rows}</div><hr style="border:0;border-top:1px solid var(--track);margin:12px 0"><p><b>Total check: ${money(total)}</b></p>
+    <div style="margin-top:16px"><button class="btn" onclick="closeLayer()">Close</button></div></div>`);
+}
+
+// Add expense, the server does the maths and the page shows what comes back
+let A = {};
+function viewAdd() {
+  A = { mode: A.mode || 'equal', cat: A.cat || 'Groceries', sel: A.sel || new Set(S.members.map(m => m.id)) };
+  const cats = CATS.map(c => `<button class="chip ${A.cat === c ? 'on' : ''}" onclick="A.cat='${c}';go('add')">${c}</button>`).join('');
+  const modes = ['equal', 'percentage', 'custom'].map(m => `<button class="chip ${A.mode === m ? 'on' : ''}" onclick="A.mode='${m}';go('add')">${m[0].toUpperCase() + m.slice(1)}</button>`).join('');
+  const members = S.members.map((m, i) => `<div class="mem"><input type="checkbox" ${A.sel.has(m.id) ? 'checked' : ''} onchange="pick('${m.id}',this.checked)">${avatar(m.name, 30)}<span class="grow">${esc(m.name)}</span>
+    ${A.mode !== 'equal' && A.sel.has(m.id) ? `<input class="v" id="v_${i}" inputmode="decimal" placeholder="${A.mode === 'percentage' ? '%' : 'KES'}" oninput="upd()">` : ''}<span class="sh" id="sh_${i}">KES 0.00</span></div>`).join('');
+  return `<div class="card"><label style="margin-top:0">Amount in KES</label><input class="amt" id="amt" inputmode="decimal" placeholder="0.00" oninput="upd()">
+    <label>What is it for?</label><input id="ttl" placeholder="For example, weekly groceries">
+    <label>Category</label><div class="chips">${cats}</div>
+    <label>Paid by</label><select id="payer">${S.members.map(m => `<option value="${m.id}" ${m.id === S.me.id ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select></div>
+    <div class="card"><label style="margin-top:0">How should it be split?</label><div class="chips">${modes}</div>
+    <label>Split between</label>${members}<div class="bar" id="bar"></div><div class="ok" id="msg"></div></div>
+    <button class="btn" onclick="saveExpense()">Save expense and notify group</button>`;
+}
+
+function pick(id, on) { on ? A.sel.add(id) : A.sel.delete(id); go('add'); }
+
+function current() {
+  const amount = parseFloat($('#amt').value) || 0;
+  const sel = S.members.filter(m => A.sel.has(m.id));
+  const vals = sel.map(m => parseFloat(($('#v_' + S.members.indexOf(m)) || {}).value) || 0);
+  return { amount, sel, body: { amount, member_ids: sel.map(m => m.id), mode: A.mode, values: A.mode === 'equal' ? [] : vals } };
+}
+
+let ticket = 0;
+async function upd() {
+  const mine = ++ticket;
+  const { amount, sel, body } = current();
+  let shares = null, error = '';
+  try { shares = (await api('/expenses/preview', 'POST', body)).shares; } catch (e) { error = e.message; }
+  if (mine !== ticket || !$('#bar')) return;
+  S.members.forEach((m, i) => { $('#sh_' + i).textContent = shares && m.id in shares ? money(shares[m.id]) : 'KES 0.00'; });
+  $('#bar').innerHTML = shares ? sel.map((m, i) => `<i style="flex:${shares[m.id] / amount};background:${COLORS[i % 6]}"></i>`).join('') : '';
+  const msg = $('#msg');
+  msg.className = shares ? 'ok' : 'err';
+  msg.textContent = shares ? 'Total check: ' + money(Object.values(shares).reduce((a, b) => a + b, 0)) + ' of ' + money(amount) : error;
+}
+
+async function saveExpense() {
+  const title = $('#ttl').value.trim();
+  if (!title) { $('#msg').className = 'err'; $('#msg').textContent = 'Please say what the expense is for.'; return; }
+  const { body } = current();
+  try {
+    await api('/expenses', 'POST', { ...body, title, category: A.cat, payer_id: $('#payer').value });
+    A = {};
+    toast('Expense saved and the group has been notified.');
+    go('home');
+  } catch (e) { $('#msg').className = 'err'; $('#msg').textContent = e.message; }
+}
+
+// History
+let filter = '';
+function viewHistory() {
+  const chips = [['', 'All'], ['expense', 'Expenses'], ['settlement', 'Settlements']].map(([k, l]) => `<button class="chip ${filter === k ? 'on' : ''}" onclick="filter='${k}';go('history')">${l}</button>`).join('');
+  const rows = S.hist.filter(e => !filter || e.kind === filter).map(e => `<div class="card">
+    <div class="row" style="justify-content:space-between"><b class="grow">${e.kind === 'settlement' ? 'Payment to ' + esc(e.payee_name) : esc(e.title)}</b><span class="tag ${e.status}">${e.status}</span></div>
+    <p style="margin-top:6px">${e.kind === 'expense' ? 'Expense' : 'Settlement'}, ${money(e.amount)}</p><p class="mute" style="font-size:12px">${e.time}</p>
+    ${e.reference ? `<p class="get" style="font-size:13px">Mpesa reference: ${esc(e.reference)}</p>` : ''}
+    <p class="hash">Record ${e.id}, fingerprint ${e.hash.slice(0, 10)}</p></div>`).join('');
+  return `<div class="row" style="margin-bottom:10px"><div class="chips grow">${chips}</div><button class="btn sm line" onclick="checkLog()">Verify log</button></div>
+    <p class="hint">Records cannot be edited or deleted.</p>${rows}`;
+}
+async function checkLog() {
+  try { toast((await api('/history/verify')).intact ? 'Log verified. Every record matches its fingerprint.' : 'Warning, some records do not match.'); } catch (e) { toast(e.message); }
+}
+
+// Alerts
+function viewAlerts() {
+  const btn = '<button class="btn line" style="margin-bottom:14px" onclick="runCheck()">Run reminder check now</button><p class="hint" style="margin-top:-6px">Reminders are also created automatically every 30 seconds.</p>';
+  return btn + (S.notes.map(n => `<div class="card"><b class="get">${esc(n.title)}</b><p style="margin-top:4px;font-size:14px">${esc(n.body)}</p></div>`).join('') || '<p class="mute">You have no alerts right now.</p>');
+}
+
+// Mpesa settlement, confirm the details, wait for the prompt, then show the result
+let pay = null, timer = null;
+function openSettle(id, name, owed) {
+  pay = { id, name, owed, done: false };
+  openLayer(`<div class="sheet"><h3 style="margin:0">Settle up</h3><p style="margin:6px 0 0" class="owe"><b>You owe ${esc(name)} ${money(owed)}</b></p>
+    <label>Amount to pay in KES, you may pay part of it</label><input id="pa" inputmode="decimal" value="${owed.toFixed(2)}">
+    <label>Mpesa phone number</label><input id="pp" inputmode="tel" value="0712345678">
+    <p class="hint">You will get a prompt on your phone. Enter your Mpesa PIN there. PesaPal never sees your PIN.</p><div class="err" id="pe"></div>
+    <div style="display:grid;gap:10px;margin-top:12px"><button class="btn" onclick="startPay()">Pay with Mpesa</button><button class="btn line" onclick="closeLayer()">Back</button></div></div>`);
+}
+
+async function startPay() {
+  const amount = parseFloat($('#pa').value) || 0;
+  if (amount <= 0) { $('#pe').textContent = 'Enter an amount greater than zero.'; return; }
+  if (amount > pay.owed + 0.001) { $('#pe').textContent = 'You only owe ' + money(pay.owed) + '.'; return; }
+  try {
+    const r = await api('/settlements', 'POST', { payee_id: pay.id, amount, phone: $('#pp').value.trim() });
+    Object.assign(pay, { amount, cid: r.checkout_id, done: false });
+    waitScreen('A request for ' + money(amount) + ' was sent to your phone. Enter your Mpesa PIN to approve it.');
+  } catch (e) { $('#pe').textContent = e.message; }
+}
+
+function waitScreen(message) {
+  clearInterval(timer);
+  let left = 60;
+  openLayer(`<div class="center"><div class="pulse"><i></i><i></i><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e11d74" stroke-width="1.6" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></div>
+    <div class="fly">${banknote(84)}</div><h2 style="color:var(--pink)">Check your phone</h2><p>${message}</p><div class="count" id="cd">60</div>
+    <button class="btn" onclick="resend()">I did not get a prompt</button>
+    <button class="btn line" onclick="cancelPay()">Cancel payment</button></div>`, true);
+  timer = setInterval(async () => {
+    left--;
+    const cd = $('#cd'); if (cd) cd.textContent = left;
+    if (left <= 0) { finish('Pending', 'We could not confirm the payment in time.'); return; }
+    if (left % 2 === 0) {
+      try {
+        const r = await api('/settlements/' + pay.cid);
+        if (r.status === 'Completed') finish('Completed', '', r.reference);
+        else if (r.status === 'Failed') finish('Failed', r.reason);
+      } catch (e) { /* a missed check is fine, the next one will try again */ }
+    }
+  }, 1000);
+}
+
+async function resend() {
+  try { pay.cid = (await api(`/settlements/${pay.cid}/resend`, 'POST')).checkout_id; waitScreen('A new prompt has been sent to your phone.'); }
+  catch (e) { toast(e.message); }
+}
+
+async function cancelPay() {
+  try { await api(`/settlements/${pay.cid}/cancel`, 'POST'); } catch (e) { /* the payment may have just finished */ }
+  finish('Failed', 'The request was cancelled.');
+}
+
+function finish(status, reason, ref = '') {
+  if (pay.done) return;
+  pay.done = true;
+  clearInterval(timer);
+  const ok = status === 'Completed';
+  const icon = ok
+    ? `<svg class="check" width="96" height="96" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e11d74"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `<svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="#e11d74" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>`;
+  const title = ok ? 'Payment successful' : status === 'Pending' ? 'Still confirming' : 'Payment not completed';
+  const text = ok ? `You paid ${esc(pay.name)} ${money(pay.amount)}.<br>Mpesa receipt: <b>${esc(ref)}</b>`
+    : status === 'Pending' ? reason + '<br>We will notify you shortly. You will not be charged twice.'
+    : esc(reason) + '<br>You can try again or pay later.';
+  openLayer(`<div class="center">${icon}<h2 style="color:var(--pink)">${title}</h2><p>${text}</p><button class="btn" style="margin-top:14px" onclick="closeLayer();go('home')">Done</button></div>`, true);
+  if (ok) rain();
+}
+
+// Images drawn in code, so the page needs no downloads
+function banknote(w) {
+  return `<svg width="${w}" viewBox="0 0 120 64"><rect x="2" y="4" width="116" height="56" rx="8" fill="#fff" stroke="#e11d74" stroke-width="3"/><rect x="9" y="11" width="102" height="42" rx="5" fill="#fdeef4"/><circle cx="60" cy="32" r="14" fill="#f7b8d0" stroke="#e11d74" stroke-width="2"/><text x="60" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="#b0125a">KES</text><text x="16" y="24" font-size="9" font-weight="700" fill="#b0125a">500</text><text x="104" y="48" text-anchor="end" font-size="9" font-weight="700" fill="#b0125a">500</text></svg>`;
+}
+
+function coins(w) {
+  const rows = [46, 36, 26, 16].map(y => `<rect x="10" y="${y}" width="44" height="12" rx="6" fill="#f6b93b" stroke="#e59f1c" stroke-width="2.5"/><path d="M20 ${y + 6}h24" stroke="#fff3b0" stroke-width="2" stroke-linecap="round"/>`).join('');
+  return `<svg width="${w}" viewBox="0 0 64 64">${rows}</svg>`;
+}
+
+function rain() {
+  const phone = document.querySelector('.phone');
+  for (let i = 0; i < 18; i++) {
+    const c = document.createElement('div');
+    c.className = 'coinfall';
+    c.style.left = Math.random() * 92 + '%';
+    c.style.animationDelay = Math.random() * 0.8 + 's';
+    phone.appendChild(c);
+    setTimeout(() => c.remove(), 3500);
+  }
+}
+
+async function runCheck() {
+  try { const r = await api('/reminders/auto', 'POST'); toast(r.added + ' new reminders created.'); go('alerts'); } catch (e) { toast(e.message); }
+}
+
+// Objectives and research questions, with live evidence from the running system
+function jump(name) { closeLayer(); go(name); }
+const expenseCount = () => S.hist.filter(e => e.kind === 'expense').length;
+const paidCount = () => S.hist.filter(e => e.kind === 'settlement' && e.status === 'Completed').length;
+
+const OBJECTIVES = [
+  ['General objective', 'To develop an M-Pesa-integrated mobile expense-sharing application to efficiently manage and settle group financial obligations.',
+    'One flow does it all, record an expense, split it, pay with Mpesa, get reminded and review the log.', () => expenseCount() + ' expenses and ' + paidCount() + ' Mpesa payments so far', 'home'],
+  ['Specific objective 1', 'To design a mobile interface for recording and managing shared expenses.',
+    'The Add tab records an expense in one short form. The Expenses tab lists every expense and explains each share.', () => expenseCount() + ' expenses recorded', 'add'],
+  ['Specific objective 2', 'To implement an automated expense-splitting algorithm for accurate balance calculation.',
+    'splitting.py on the server works out equal, percentage and custom shares, refuses totals that do not add up, and fixes rounding. The screen shows a live bar and a total check.', () => 'Try Custom with wrong numbers and it will not save', 'add'],
+  ['Specific objective 3', 'To integrate the M-Pesa Daraja API to facilitate the seamless settlement of outstanding balances.',
+    'mpesa.py sends the STK push and the callback route receives the result. The app shows the prompt, a countdown and the receipt, then updates balances. It simulates Safaricom until Daraja keys are set.', () => paidCount() + ' payments settled', 'home'],
+  ['Specific objective 4', 'To implement automated notifications and payment reminders.',
+    'A background job creates reminders every 30 seconds for anyone who owes. The Remind button nudges a person at once, and the Alerts tab lists everything.', () => S.notes.length + ' alerts for you right now', 'alerts'],
+  ['Specific objective 5', 'To maintain a secure transaction history for transparency and accountability.',
+    'Every expense and payment is appended to a log that cannot be edited or deleted. Each record holds the fingerprint of the one before it, so tampering is detected.', () => S.hist.length + ' records in the log', 'history']
+];
+
+const QUESTIONS = [
+  ['Research question 1', 'What challenges do users face when managing shared expenses using existing methods?',
+    'Spreadsheets and chat messages need manual sums, hide who paid what, cause disputes and force people to switch to M-Pesa separately. PesaPal replaces all of that with one shared record.', 'home'],
+  ['Research question 2', 'How can a mobile application improve the management of shared expenses?',
+    'Everyone sees the same live balances. Adding an expense is one form and paying is one tap, so nothing is lost in chat history.', 'add'],
+  ['Research question 3', 'How can automated bill splitting reduce calculation errors?',
+    'People never do the maths. The server splits, checks that shares add up to the total and shows the working, so errors are blocked before saving.', 'expenses'],
+  ['Research question 4', 'How can M-Pesa integration improve the settlement of shared expenses?',
+    'A payment prompt appears on the phone, the PIN stays in M-Pesa, and the receipt is recorded automatically. No screenshots and no switching apps.', 'home'],
+  ['Research question 5', 'How effective is PesaPal in promoting transparency and accountability?',
+    'Every share can be explained and every record is locked. Effectiveness is measured with the short survey below, which gives scores you can report.', 'history']
+];
+
+const FB = {};
+function fbPick(key, value) {
+  FB[key] = value;
+  document.querySelectorAll(`[data-fb="${key}"]`).forEach(b => b.classList.toggle('on', +b.dataset.v === value));
+}
+
+function scale(key, label) {
+  return `<label style="margin:6px 0 0">${label}</label><div class="scale">${[1, 2, 3, 4, 5].map(v => `<button class="chip" data-fb="${key}" data-v="${v}" onclick="fbPick('${key}',${v})">${v}</button>`).join('')}</div>`;
+}
+
+async function sendFeedback() {
+  if (!FB.clarity || !FB.trust || !FB.ease) { toast('Please answer all three questions.'); return; }
+  try {
+    const r = await api('/feedback', 'POST', FB);
+    $('#fbout').textContent = `Thank you. Average from ${r.count} responses, clarity ${r.clarity}, trust ${r.trust}, ease of use ${r.ease}, out of 5.`;
+  } catch (e) { toast(e.message); }
+}
+
+async function showObjectives() {
+  try { await refresh(); } catch (e) { /* show what we already have */ }
+  const goals = OBJECTIVES.map(([tag, text, how, evidence, target]) => `<div class="obj"><small>${tag}</small><p><b>${text}</b></p><p>${how}</p>
+    <span class="ev">Live evidence: ${evidence()}</span><div><button class="btn sm line" onclick="jump('${target}')">Open this screen</button></div></div>`).join('');
+  const questions = QUESTIONS.map(([tag, q, a, target]) => `<div class="obj"><small>${tag}</small><p><b>${q}</b></p><p>${a}</p>
+    <div><button class="btn sm line" onclick="jump('${target}')">See it in the app</button></div></div>`).join('');
+  openLayer(`<div class="sheet"><div class="row" style="justify-content:space-between"><h3 style="margin:0">How PesaPal meets the study</h3><button class="chip" onclick="closeLayer()">Close</button></div>
+    <p class="hint">Each card shows the objective, how the system answers it, and live numbers from the running app.</p>${goals}
+    <h3>Research questions</h3>${questions}
+    <h3>Rate PesaPal, 1 is low and 5 is high</h3><div class="obj">${scale('clarity', 'The split calculation was clear to me')}${scale('trust', 'I trust the transaction history')}${scale('ease', 'The app was easy to use')}
+    <button class="btn" onclick="sendFeedback()">Send feedback</button><p class="hint" id="fbout"></p></div></div>`);
+}
+
+// Forms, used by the money and house screens
+function form(title, fields, submit, cta = 'Save') {
+  openLayer(`<div class="sheet"><h3 style="margin:0 0 4px">${title}</h3>${fields.map(f => `<label>${f[1]}</label><input id="f_${f[0]}" ${f[3] || ''} value="${esc(f[2] ?? '')}">`).join('')}
+    <div class="err" id="fe"></div><div style="margin-top:14px;display:flex;gap:10px"><button class="btn line" onclick="closeLayer()">Cancel</button><button class="btn" id="fs">${cta}</button></div></div>`);
+  $('#fs').onclick = async () => {
+    const v = {}; fields.forEach(f => v[f[0]] = $('#f_' + f[0]).value.trim());
+    try { await submit(v); closeLayer(); await go(tab); } catch (e) { $('#fe').textContent = e.message; }
+  };
+}
+const NUM = 'inputmode="decimal"';
+
+function ring(pct, label, big, sub) {
+  const C = 2 * Math.PI * 52;
+  return `<div class="ringbox"><svg viewBox="0 0 140 140"><circle r="52" cx="70" cy="70" fill="none" stroke="var(--track)" stroke-width="12"/>
+    <circle class="rfg" r="52" cx="70" cy="70" fill="none" stroke="var(--pink)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-off="${C * (1 - pct)}" transform="rotate(-90 70 70)"/></svg>
+    <div class="mid"><small>${label}</small><b data-n="${big}">${money(0)}</b><span class="mute" style="font-size:12px">${sub}</span></div></div>`;
+}
+
+// Money: emergency fund and budget
+function viewMoney() {
+  const f = S.fund, b = S.budget;
+  const rows = Object.entries(b.limits).map(([c, l]) => {
+    const s = b.spent[c] || 0, p = Math.min(s / l, 1);
+    return `<div style="margin:14px 0"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${esc(c)}</b><span class="${s > l ? 'get' : 'mute'}" style="font-size:13px">${money(s)} / ${money(l)}</span></div>
+      <div class="prog"><i style="width:${p * 100}%;${p > .8 ? 'background:var(--pink)' : ''}"></i></div></div>`;
+  }).join('') || '<p class="mute">No limits yet. Tap Edit budget.</p>';
+  const log = f.log.map(x => `<div class="row" style="justify-content:space-between;margin:9px 0;font-size:13px"><span>${esc(x.note || x.type)}<br><span class="mute">${esc(x.time)}</span></span>
+    <b class="${x.type === 'stash' ? 'get' : ''}">${x.type === 'stash' ? '+' : '-'}${money(x.amount)}</b></div>`).join('') || '<p class="mute" style="font-size:13px">Nothing yet. Even KES 50 counts.</p>';
+  return `<div class="card" style="text-align:center"><div class="sec"><h3 style="margin:0">Dharura fund</h3><button class="chip" onclick="askGoal()">Goal</button></div>
+    ${ring(Math.min(f.saved / f.goal, 1), 'SAVED', f.saved, 'of ' + money(f.goal))}
+    <p class="mute" style="font-size:13px;margin-bottom:12px"><b style="color:var(--ink)">${f.runway_months} months</b> of basic costs covered. Aim for 3.</p>
+    <div class="chips" style="justify-content:center;margin-bottom:12px">${[50, 100, 200, 500].map(a => `<button class="chip" onclick="stash(${a})">+${a}</button>`).join('')}</div>
+    <div style="display:flex;gap:10px"><button class="btn" onclick="askStash()">Stash money</button><button class="btn line" onclick="askWithdraw()">Emergency use</button></div></div>
+    <div class="card"><div class="row"><div class="grow"><b>Round up my payments</b><span class="mute" style="font-size:12px">After each Mpesa payment, stash the gap to the next KES 50.</span></div>
+    <button class="sw ${f.roundup ? 'on' : ''}" onclick="toggleRound()" aria-label="Toggle round up"></button></div></div>
+    <div class="card"><div class="sec"><h3 style="margin:0">${esc(b.month)} budget</h3><button class="chip" onclick="askBudget()">Edit</button></div>
+    <p class="mute" style="font-size:13px;margin-top:6px">${esc(b.income_label)} ${money(b.income)}, payday in <b style="color:var(--ink)">${b.days_to_payday} days</b></p>
+    <p style="font-size:15px;margin-top:8px"><b class="${b.left < 0 ? 'get' : ''}">${money(b.left)}</b> <span class="mute" style="font-size:13px">left after ${money(b.total_spent)} spent</span></p>${rows}</div>
+    <h3>Fund activity</h3><div class="card">${log}</div>`;
+}
+async function stash(a) { try { await api('/fund/stash', 'POST', { amount: a, note: 'Quick stash' }); toast('Stashed ' + money(a)); await go('money'); } catch (e) { toast(e.message); } }
+const askStash = () => form('Stash money', [['amount', 'Amount (KES)', '', NUM], ['note', 'Note, optional', '']], v => api('/fund/stash', 'POST', { amount: +v.amount, note: v.note }));
+const askWithdraw = () => form('Use the emergency fund', [['amount', 'Amount (KES)', '', NUM], ['note', 'What is the emergency?', '']], v => api('/fund/withdraw', 'POST', { amount: +v.amount, note: v.note }), 'Withdraw');
+const askGoal = () => form('Fund goal', [['goal', 'Goal (KES)', S.fund.goal, NUM], ['need', 'Basic costs per month (KES)', S.fund.monthly_need, NUM]], v => api('/fund/goal', 'POST', { goal: +v.goal, monthly_need: +v.need }));
+async function toggleRound() { try { await api('/fund/roundup', 'POST', { on: !S.fund.roundup }); await go('money'); } catch (e) { toast(e.message); } }
+function askBudget() {
+  const b = S.budget, cats = CATS.filter(c => c !== 'Other');
+  form('Monthly budget', [['income', 'Income this month (KES)', b.income, NUM], ['label', 'Income source', b.income_label], ['payday', 'Payday, day of month', b.payday, NUM],
+    ...cats.map((c, i) => ['l' + i, c + ' limit', b.limits[c] || '', NUM])],
+    v => api('/budget', 'POST', { income: +v.income, income_label: v.label, payday: +v.payday, limits: Object.fromEntries(cats.map((c, i) => [c, +v['l' + i]]).filter(x => x[1] > 0)) }));
+}
+
+// House: shared bills and kitties
+function viewHouse() {
+  const bills = S.bills.map(x => {
+    const tag = x.status === 'paid' ? '<span class="tag get">Paid</span>' : x.status === 'overdue' ? '<span class="tag get">Overdue</span>' : `<span class="tag">in ${x.days_left}d</span>`;
+    return `<div class="card"><div class="row"><div class="av sq">${esc(x.title[0])}</div><div class="grow"><b>${esc(x.title)}</b><span class="mute" style="font-size:12px">${money(x.amount)}, due ${x.due_label}, ${x.members.length} people</span>
+      <span class="get" style="font-size:13px;font-weight:600">Your share ${money(x.share)}</span></div>${tag}</div>
+      ${x.status === 'paid' ? `<p class="mute" style="font-size:12px;margin-top:8px">Paid by ${esc(x.paid_by)}</p>` : `<div style="margin-top:12px"><button class="btn sm" onclick="payBill(${x.id})">I paid, split it</button></div>`}</div>`;
+  }).join('') || '<p class="mute">No shared bills yet.</p>';
+  const kitties = S.kitties.map(k => `<div class="card"><div class="row" style="justify-content:space-between"><b>${esc(k.name)}</b><b>${money(k.total)}</b></div>
+    <div class="prog"><i style="width:${Math.min(k.total / k.target, 1) * 100}%;background:var(--pink)"></i></div>
+    <p class="mute" style="font-size:12px;margin:8px 0 12px">Target ${money(k.target)}, ${k.contributors} contributors, you put in ${money(k.mine)}</p>
+    <button class="btn sm" onclick="askKitty(${k.id})">Add money</button></div>`).join('') || '<p class="mute">No kitties yet.</p>';
+  return `<div class="sec"><h3>Shared bills</h3><button class="chip" onclick="askBill()">+ Bill</button></div>${bills}
+    <div class="sec"><h3>House kitties</h3><button class="chip" onclick="askNewKitty()">+ Kitty</button></div>${kitties}`;
+}
+async function payBill(id) { try { await api(`/bills/${id}/paid`, 'POST'); toast('Done. Your housemates now owe you their share.'); await go('house'); } catch (e) { toast(e.message); } }
+const askBill = () => form('New shared bill', [['title', 'What is it? (Rent, Wifi, KPLC tokens)', ''], ['amount', 'Total amount (KES)', '', NUM], ['day', 'Due day of month', 5, NUM]],
+  v => api('/bills', 'POST', { title: v.title, amount: +v.amount, due_day: +v.day, category: /rent/i.test(v.title) ? 'Rent' : 'Utilities', member_ids: S.members.map(m => m.id) }));
+const askNewKitty = () => form('New house kitty', [['name', 'Name (Party fund, Gas, Emergency)', ''], ['target', 'Target (KES)', '', NUM]], v => api('/kitties', 'POST', { name: v.name, target: +v.target }));
+const askKitty = id => form('Add money to the kitty', [['amount', 'Amount (KES)', '', NUM]], v => api(`/kitties/${id}/contribute`, 'POST', { amount: +v.amount }), 'Add');
+
+// Sign in with email and PIN
+let G = 'female';
+const field = (id, label, attrs = '') => `<label>${label}</label><input id="${id}" ${attrs}>`;
+const PINATTR = 'class="pinbox" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="4 to 6 digits"';
+function loginShell(inner) {
+  openLayer(`<div class="center" style="overflow:auto;justify-content:flex-start;padding-top:24px">
+    <div style="display:flex;align-items:flex-end;justify-content:center;gap:10px"><span class="float">${coins(46)}</span><span class="float b">${banknote(78)}</span></div>
+    <h1 style="color:var(--pink);font-size:32px;margin-top:2px;font-weight:800;letter-spacing:-.03em">PesaPal</h1><p class="mute" style="font-size:13px">Split bills. Build your safety net.</p>
+    <div class="card" style="width:100%;text-align:left;margin-top:6px">${inner}</div></div>`, true);
+}
+function showLogin(msg) {
+  loginShell(`<h3 style="margin:0 0 2px">Welcome back</h3>${field('a_email', 'Email', 'type="email" autocomplete="email" value="amina@pesapal.demo"')}${field('a_pin', 'PIN', PINATTR + ' value="1234"')}
+    <div class="err" id="aerr">${msg || ''}</div><div style="margin-top:14px"><button class="btn" onclick="signIn()">Sign in</button></div>
+    <div class="row" style="justify-content:space-between;margin-top:14px;font-size:13px"><a class="lnk" onclick="showForgot()">Forgot PIN?</a><a class="lnk" onclick="showRegister()">Create account</a></div>
+    <p class="hint">Demo accounts: amina, brian, wanjiku or kevin @pesapal.demo with PIN 1234.</p>`);
+}
+function startSession(u) { S.me = u; $('#me').textContent = u.name[0]; closeLayer(); go('home'); }
+async function signIn() {
+  try { startSession(await api('/auth/login', 'POST', { email: $('#a_email').value.trim(), pin: $('#a_pin').value })); }
+  catch (e) { $('#aerr').textContent = e.message; }
+}
+function setG(g) { G = g; $('#gf').classList.toggle('on', g === 'female'); $('#gm').classList.toggle('on', g === 'male'); }
+function showRegister(msg) {
+  G = 'female';
+  loginShell(`<h3 style="margin:0 0 2px">Create your account</h3>${field('r_name', 'Name', 'autocomplete="name"')}${field('r_email', 'Email', 'type="email" autocomplete="email"')}
+    ${field('r_phone', 'Safaricom number', 'inputmode="tel" placeholder="0712345678"')}
+    <label>I am</label><div class="chips"><button class="chip on" id="gf" onclick="setG('female')">Female</button><button class="chip" id="gm" onclick="setG('male')">Male</button></div>
+    ${field('r_pin', 'Choose a PIN', PINATTR)}<div class="err" id="aerr">${msg || ''}</div>
+    <div style="margin-top:14px"><button class="btn" onclick="register()">Send my code</button></div>
+    <p style="margin-top:14px;font-size:13px"><a class="lnk" onclick="showLogin()">I already have an account</a></p>`);
+}
+async function register() {
+  const body = { name: $('#r_name').value.trim(), email: $('#r_email').value.trim(), phone: $('#r_phone').value.trim(), gender: G, pin: $('#r_pin').value };
+  try { const r = await api('/auth/register', 'POST', body); showVerify(body.email, r.dev_code); }
+  catch (e) { $('#aerr').textContent = e.message; }
+}
+function codeNote(dev) { return dev ? `<div class="devnote">Demo mode: no email server is connected, so your code is <b>${esc(dev)}</b>. With email set up, it arrives in your inbox.</div>` : '<p class="hint">We sent a 6 digit code to your email. It expires in 10 minutes.</p>'; }
+function showVerify(email, dev) {
+  loginShell(`<h3 style="margin:0 0 2px">Check your email</h3><p class="mute" style="font-size:13px">Enter the code sent to ${esc(email)}</p>${codeNote(dev)}
+    ${field('v_code', 'Code', 'inputmode="numeric" maxlength="6" class="pinbox"')}<div class="err" id="aerr"></div>
+    <div style="margin-top:14px"><button class="btn" onclick="verifyEmail('${esc(email)}')">Verify and continue</button></div>`);
+}
+async function verifyEmail(email) {
+  try { startSession(await api('/auth/verify', 'POST', { email, code: $('#v_code').value.trim() })); }
+  catch (e) { $('#aerr').textContent = e.message; }
+}
+function showForgot() {
+  loginShell(`<h3 style="margin:0 0 2px">Reset your PIN</h3><p class="mute" style="font-size:13px">We will email you a code.</p>${field('f_email', 'Email', 'type="email"')}<div class="err" id="aerr"></div>
+    <div style="margin-top:14px"><button class="btn" onclick="sendReset()">Send code</button></div><p style="margin-top:14px;font-size:13px"><a class="lnk" onclick="showLogin()">Back to sign in</a></p>`);
+}
+async function sendReset() {
+  const email = $('#f_email').value.trim();
+  try { const r = await api('/auth/forgot', 'POST', { email }); showReset(email, r.dev_code); } catch (e) { $('#aerr').textContent = e.message; }
+}
+function showReset(email, dev) {
+  loginShell(`<h3 style="margin:0 0 2px">Choose a new PIN</h3>${codeNote(dev)}${field('x_code', 'Code', 'inputmode="numeric" maxlength="6" class="pinbox"')}${field('x_pin', 'New PIN', PINATTR)}<div class="err" id="aerr"></div>
+    <div style="margin-top:14px"><button class="btn" onclick="doReset('${esc(email)}')">Save new PIN</button></div>`);
+}
+async function doReset(email) {
+  try { await api('/auth/reset', 'POST', { email, code: $('#x_code').value.trim(), new_pin: $('#x_pin').value }); showLogin('PIN changed. Sign in with your new PIN.'); }
+  catch (e) { $('#aerr').textContent = e.message; }
+}
+
+// Menu and white shades
+const WHITES = [['pure', 'Pure white', 'Crisp and clean, cards outlined'], ['pearl', 'Soft pearl', 'Light grey page, white cards'], ['ivory', 'Warm ivory', 'Creamy and friendly'], ['mist', 'Cool mist', 'Faint blue, calm and techy']];
+const SWATCH = { pure: '#ffffff', pearl: '#f5f5f6', ivory: '#faf6ef', mist: '#f0f4f9' };
+function setWhite(v) {
+  const r = document.documentElement;
+  if (v === 'auto') { delete r.dataset.white; delete r.dataset.theme; } else { r.dataset.white = v; r.dataset.theme = 'light'; }
+  try { localStorage.setItem('white', v); } catch (e) { /* storage can be blocked */ }
+}
+function openWhites() {
+  const cur = document.documentElement.dataset.white || 'auto';
+  openLayer(`<div class="sheet"><h3 style="margin:0 0 4px">Background shade</h3><p class="mute" style="font-size:13px;margin-bottom:12px">Tap one to try it. The app changes behind this sheet.</p>
+    ${WHITES.map(([k, n, d]) => `<div class="shade ${cur === k ? 'on' : ''}" onclick="setWhite('${k}');openWhites()"><i style="background:${SWATCH[k]}"></i><div><b>${n}</b><span>${d}</span></div></div>`).join('')}
+    <div class="shade ${cur === 'auto' ? 'on' : ''}" onclick="setWhite('auto');openWhites()"><i style="background:linear-gradient(135deg,#fff 50%,#0b0b0c 50%)"></i><div><b>Follow my phone</b><span>Light or dark automatically</span></div></div>
+    <div style="margin-top:6px"><button class="btn" onclick="closeLayer()">Done</button></div></div>`);
+}
+function openMenu() {
+  openLayer(`<div class="sheet"><div class="row" style="margin-bottom:14px">${avatar(S.me.name)}<div class="grow"><b>${esc(S.me.name)}</b><span class="mute" style="font-size:12px">${esc(S.me.email || '')}</span></div></div>
+    <div style="display:grid;gap:10px"><button class="btn line" onclick="openWhites()">Background shade</button><button class="btn line" onclick="showObjectives()">Project objectives</button>
+    <button class="btn" onclick="S.me=null;closeLayer();showLogin()">Sign out</button></div></div>`);
+}
+try { const w = localStorage.getItem('white'); if (w && w !== 'auto') setWhite(w); } catch (e) { /* ignore */ }
+
+showLogin();
+drawNav();
+</script>
+</body>
+</html>
